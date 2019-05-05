@@ -6,6 +6,8 @@ The Game class is a collection of Frames. It has an attribute for the tenth fram
 
 Both classes use simple internal data structures for easy serizlization to or from JSON in anticipation of extension into a ReST api. Both are fully tested.
 
+To see the api in action load readme.ipynb into a live Jupyter Notebook.
+
 ```bash
 (py3) rriehle@ontario:~/src/multiscale/bowling (master)$ python -m pytest -vv tests/
 ===================================================================== test session starts ======================================================================
