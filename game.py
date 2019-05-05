@@ -1,3 +1,4 @@
+import json
 from frame import Frame
 
 
@@ -6,7 +7,6 @@ class Game:
     def __init__(self, frames, frame10ball3=0):
         self.frames = [Frame(frame) for frame in frames]
         self.frame10ball3 = frame10ball3
-        self.game_score = 0
         self.validate()
 
     def validate(self):
@@ -23,9 +23,40 @@ class Game:
                 self.frame10ball3
             ))
 
-        # Have each frame validate itself; this is redundant if Frame.__init__ does the job
-        for frame in self.frames:
-            frame.validate()
+    def score(self):
 
-    def score_game(self):
-        pass
+        def is_last_frame(i):
+            return 9 == i
+
+        for i, frame in enumerate(self.frames):
+            if frame.is_strike():
+                self.frames[i] = Frame((
+                    frame.first_ball,
+                    frame.second_ball,
+                    (20 + self.frame10ball3
+                     if is_last_frame(i)
+                     else 10 + self.frames[i+1].first_ball + self.frames[i+1].second_ball)
+                ))
+            elif frame.is_spare():
+                self.frames[i] = Frame((
+                    frame.first_ball,
+                    frame.second_ball,
+                    (10 + self.frame10ball3
+                     if is_last_frame(i)
+                     else 10 + self.frames[i + 1].first_ball)
+                ))
+            else:
+                self.frames[i] = Frame((
+                    frame.first_ball,
+                    frame.second_ball,
+                    frame.first_ball + frame.second_ball,
+                ))
+
+        return sum([frame.frame_score for frame in self.frames])
+
+    def to_json(self):
+        return json.dumps({
+            'frames': [frame.to_json() for frame in self.frames],
+            'frame10ball3': self.frame10ball3,
+            'score': self.score()
+        })
