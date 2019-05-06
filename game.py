@@ -28,22 +28,32 @@ class Game:
         def is_last_frame(i):
             return 9 == i
 
+        def score_strike(i):
+            return (
+                20 + self.frame10ball3
+                if is_last_frame(i)
+                else 10 + self.frames[i+1].first_ball + self.frames[i+1].second_ball
+            )
+
+        def score_spare(i):
+            return (
+                10 + self.frame10ball3
+                if is_last_frame(i)
+                else 10 + self.frames[i+1].first_ball
+            )
+
         for i, frame in enumerate(self.frames):
             if frame.is_strike():
                 self.frames[i] = Frame((
                     frame.first_ball,
                     frame.second_ball,
-                    (20 + self.frame10ball3
-                     if is_last_frame(i)
-                     else 10 + self.frames[i+1].first_ball + self.frames[i+1].second_ball)
+                    score_strike(i)
                 ))
             elif frame.is_spare():
                 self.frames[i] = Frame((
                     frame.first_ball,
                     frame.second_ball,
-                    (10 + self.frame10ball3
-                     if is_last_frame(i)
-                     else 10 + self.frames[i + 1].first_ball)
+                    score_spare(i)
                 ))
             else:
                 self.frames[i] = Frame((
